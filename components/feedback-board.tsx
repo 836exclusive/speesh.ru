@@ -13,9 +13,10 @@ import { Switch } from "@/components/ui/switch"
 import { Upload, Frame, X } from "lucide-react"
 import type { PutBlobResult } from '@vercel/blob'
 import type { Idea } from '@/lib/db'
-
+import type { Idea } from '@/lib/types';
 export function FeedbackBoardComponent() {
   const [ideas, setIdeas] = useState<Idea[]>([])
+
   const [newIdea, setNewIdea] = useState<{
     title: string
     description: string

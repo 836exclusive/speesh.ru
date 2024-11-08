@@ -10,7 +10,7 @@ export async function addIdea(idea: Omit<Idea, 'id'>): Promise<Idea> {
   const values = [
     idea.title,
     idea.description,
-    idea.tags, // Assuming the API route is already formatting this as a PostgreSQL-compatible array
+    idea.tags,
     idea.author,
     idea.image_url,
   ];
@@ -25,7 +25,6 @@ export async function getIdeas(): Promise<Idea[]> {
   return result.rows;
 }
 
-// New updateVotes function
 export async function updateVotes(id: number): Promise<number> {
   const query = `
     UPDATE ideas SET votes = votes + 1 WHERE id = $1 RETURNING votes;
