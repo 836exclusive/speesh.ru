@@ -21,7 +21,11 @@ export async function POST(request: Request) {
     const { id, idea } = await request.json() as { id: string, idea: Idea }
     const ideas = (await get('ideas')) as IdeasMap | null
     const updatedIdeas: IdeasMap = { ...(ideas || {}), [id]: idea }
-    await client.set('ideas', updatedIdeas)
+
+    await client.update([
+      { key: 'ideas', value: updatedIdeas }
+    ])
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Failed to update votes:', error)
