@@ -43,8 +43,8 @@ export function FeedbackBoardComponent() {
           throw new Error('Failed to fetch ideas')
         }
         const data = await response.json()
-        setIdeas(data)
         const tags = new Set<string>(data.flatMap((idea: Idea) => Array.isArray(idea.tags) ? idea.tags : []))
+        setIdeas(data)
         setAllTags(Array.from(tags))
       } catch (error) {
         console.error('Error fetching ideas:', error)
@@ -105,7 +105,10 @@ export function FeedbackBoardComponent() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(newIdea),
+          body: JSON.stringify({
+            ...newIdea,
+            tags: newIdea.tags, // Ensure tags are directly passed as an array
+          }),
         })
 
         if (!response.ok) {
