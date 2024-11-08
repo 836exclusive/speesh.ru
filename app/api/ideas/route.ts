@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { addIdea, getIdeas } from '@/lib/db';
+import { addIdea, getIdeas, updateVotes } from '@/lib/db';
 
 export async function GET() {
   try {
@@ -17,19 +17,27 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-
-    // Convert the `tags` array to a database-compatible format
-    const formattedTags = `{${body.tags.join(',')}}`; // Format for PostgreSQL
-    const newIdea = await addIdea({
-      ...body,
-      tags: formattedTags,
-    });
-
+    const newIdea = await addIdea(body);
     return NextResponse.json(newIdea);
   } catch (error) {
     console.error('Error adding idea:', error);
     return NextResponse.json(
       { error: 'Failed to add idea' },
+      { status: 500 }
+    );
+  }
+}
+
+// Example PATCH endpoint to handle voting
+export async function PATCH(request: Request) {
+  const { id } = await request.json();
+  try {
+    const votes = await updateVotes(id);
+    return NextResponse.json({ votes });
+  } catch (error) {
+    console.error('Error updating votes:', error);
+    return NextResponse.json(
+      { error: 'Failed to update votes' },
       { status: 500 }
     );
   }
