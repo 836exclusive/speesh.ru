@@ -1,5 +1,9 @@
-import { FeedbackBoardComponent } from "@/components/feedback-board"
+import { FeedbackBoardComponent } from '@/components/feedback-board'
 
-export default function Page() {
-  return <FeedbackBoardComponent />
+export default function Home() {
+  return (
+    <main>
+      <FeedbackBoardComponent />
+    </main>
+  )
 }
