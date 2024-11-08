@@ -1,5 +1,5 @@
 import { db } from './dbConnection';
-import type { Idea } from './types';
+import type { Idea } from './types'; // Import Idea from types
 
 export async function addIdea(idea: Omit<Idea, 'id'>): Promise<Idea> {
   const query = `

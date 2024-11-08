@@ -1,21 +1,19 @@
-'use client'
+import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Upload, Frame, X } from "lucide-react";
+import type { PutBlobResult } from '@vercel/blob';
+import type { Idea } from '@/lib/types'; // Import only from `types`
 
-import { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Upload, Frame, X } from "lucide-react"
-import type { PutBlobResult } from '@vercel/blob'
-import type { Idea } from '@/lib/db'
-import type { Idea } from '@/lib/types';
 export function FeedbackBoardComponent() {
-  const [ideas, setIdeas] = useState<Idea[]>([])
+  const [ideas, setIdeas] = useState<Idea[]>([]);
 
   const [newIdea, setNewIdea] = useState<{
     title: string
