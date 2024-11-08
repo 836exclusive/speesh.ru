@@ -16,7 +16,11 @@ export async function getIdeas() {
       SELECT * FROM ideas
       ORDER BY votes DESC
     `;
-    return rows;
+    // Parse tags from JSON string to array if necessary
+    return rows.map(row => ({
+      ...row,
+      tags: Array.isArray(row.tags) ? row.tags : JSON.parse(row.tags),
+    }));
   } catch (error) {
     console.error('Error fetching ideas:', error);
     throw error;
@@ -31,7 +35,7 @@ export async function addIdea(idea: Omit<Idea, 'id' | 'votes'>) {
         ${idea.title},
         ${idea.description},
         0,
-        ${idea.tags},
+        ${JSON.stringify(idea.tags)}, -- Convert tags to JSON string
         ${idea.author},
         ${idea.image_url}
       )
