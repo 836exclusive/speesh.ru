@@ -12,6 +12,13 @@ export async function POST(request: Request) {
     );
   }
 
+  if (!request.body) {
+    return NextResponse.json(
+      { error: 'Request body is empty' },
+      { status: 400 }
+    );
+  }
+
   try {
     const blob = await put(filename, request.body, {
       access: 'public',
