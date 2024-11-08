@@ -17,7 +17,14 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const newIdea = await addIdea(body);
+
+    // Convert the `tags` array to a database-compatible format
+    const formattedTags = `{${body.tags.join(',')}}`; // Format for PostgreSQL
+    const newIdea = await addIdea({
+      ...body,
+      tags: formattedTags,
+    });
+
     return NextResponse.json(newIdea);
   } catch (error) {
     console.error('Error adding idea:', error);
