@@ -13,17 +13,7 @@ import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Upload, Frame } from "lucide-react"
 import type { PutBlobResult } from '@vercel/blob'
-import { get } from '@vercel/edge-config'
-
-type Idea = {
-  id: string
-  title: string
-  description: string
-  votes: number
-  tags: string[]
-  author: string
-  imageUrl?: string
-}
+import type { Idea } from '@/lib/db'
 
 const predefinedTags = [
   "Cinema 4D", "Photoshop", "Blender", "Unity", "Unreal Engine",
@@ -34,12 +24,18 @@ const predefinedTags = [
 
 export function FeedbackBoardComponent() {
   const [ideas, setIdeas] = useState<Idea[]>([])
-  const [newIdea, setNewIdea] = useState<{ title: string; description: string; tags: string[]; author: string; imageUrl: string }>({
+  const [newIdea, setNewIdea] = useState<{
+    title: string
+    description: string
+    tags: string[]
+    author: string
+    image_url: string
+  }>({
     title: '',
     description: '',
     tags: [],
     author: '',
-    imageUrl: ''
+    image_url: ''
   })
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
@@ -48,14 +44,9 @@ export function FeedbackBoardComponent() {
   useEffect(() => {
     const fetchIdeas = async () => {
       try {
-        const ideasData = await get('ideas') as Record<string, Idea>
-        if (ideasData) {
-          const ideasArray = Object.entries(ideasData).map(([id, idea]) => ({
-            id,
-            ...idea
-          }))
-          setIdeas(ideasArray)
-        }
+        const response = await fetch('/api/ideas')
+        const data = await response.json()
+        setIdeas(data)
       } catch (error) {
         console.error('Error fetching ideas:', error)
       }
@@ -94,7 +85,7 @@ export function FeedbackBoardComponent() {
       const newBlob = await response.json() as PutBlobResult
       setNewIdea(prev => ({
         ...prev,
-        imageUrl: newBlob.url
+        image_url: newBlob.url
       }))
     } catch (error) {
       console.error('Error uploading file:', error)
@@ -105,51 +96,41 @@ export function FeedbackBoardComponent() {
 
   const addIdea = async () => {
     if (newIdea.title && newIdea.description) {
-      const id = Date.now().toString()
-      const newIdeaData = {
-        ...newIdea,
-        id,
-        votes: 0,
-        tags: newIdea.tags,
-        imageUrl: newIdea.imageUrl || null
-      }
-
       try {
-        // Для Edge Config нам нужен серверный эндпоинт
-        await fetch('/api/ideas', {
+        const response = await fetch('/api/ideas', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ id, idea: newIdeaData }),
+          body: JSON.stringify(newIdea),
         })
 
-        setIdeas([...ideas, newIdeaData])
-        setNewIdea({ title: '', description: '', tags: [], author: '', imageUrl: '' })
+        const addedIdea = await response.json()
+        setIdeas(prev => [...prev, addedIdea])
+        setNewIdea({
+          title: '',
+          description: '',
+          tags: [],
+          author: '',
+          image_url: ''
+        })
       } catch (error) {
         console.error('Error adding idea:', error)
       }
     }
   }
 
-  const handleVote = async (id: string) => {
-    const idea = ideas.find(i => i.id === id)
-    if (idea) {
-      const updatedIdea = { ...idea, votes: idea.votes + 1 }
-      try {
-        // Для Edge Config нам нужен серверный эндпоинт
-        await fetch('/api/ideas/vote', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id, idea: updatedIdea }),
-        })
-
-        setIdeas(ideas.map(i => i.id === id ? updatedIdea : i))
-      } catch (error) {
-        console.error('Error voting:', error)
-      }
+  const handleVote = async (id: number) => {
+    try {
+      const response = await fetch(`/api/ideas/${id}/vote`, {
+        method: 'POST',
+      })
+      const updatedIdea = await response.json()
+      setIdeas(prev => prev.map(idea =>
+        idea.id === id ? updatedIdea : idea
+      ))
+    } catch (error) {
+      console.error('Error voting:', error)
     }
   }
 
@@ -162,14 +143,13 @@ export function FeedbackBoardComponent() {
     }))
   }
 
-  // Остальной JSX код остается без изменений
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
       <div className="container mx-auto p-4 bg-white dark:bg-black text-black dark:text-white max-w-3xl">
         <header className="flex items-center h-16 px-4 border-b shrink-0 md:px-6">
           <div className="flex items-center gap-2 text-lg font-semibold sm:text-base mr-4">
             <Frame className="w-6 h-6" />
-            <span>Канбан-доска идей</span>
+            <span>speesh.dev</span>
           </div>
           <div className="flex items-center ml-auto">
             <div className="flex items-center space-x-2">
@@ -249,10 +229,10 @@ export function FeedbackBoardComponent() {
                       <Upload className="w-4 h-4" />
                       {isUploading ? 'Загрузка...' : 'Загрузить изображение'}
                     </Button>
-                    {newIdea.imageUrl && (
+                    {newIdea.image_url && (
                       <div className="relative w-16 h-16 rounded-md overflow-hidden border-2 border-gray-300 dark:border-gray-700">
                         <Image
-                          src={newIdea.imageUrl}
+                          src={newIdea.image_url}
                           alt="Preview"
                           fill
                           className="object-cover"
@@ -275,22 +255,38 @@ export function FeedbackBoardComponent() {
                 </CardHeader>
                 <CardContent className="pt-4">
                   <p className="mb-4">{idea.description}</p>
-                  {idea.imageUrl && (
-                    <Image src={idea.imageUrl} alt={idea.title} width={600} height={200} className="mb-4 rounded-md w-full h-40 object-cover border-2 border-gray-300 dark:border-gray-700 shadow-md" />
+                  {idea.image_url && (
+                    <Image
+                      src={idea.image_url}
+                      alt={idea.title}
+                      width={600}
+                      height={200}
+                      className="mb-4 rounded-md w-full h-40 object-cover border-2 border-gray-300 dark:border-gray-700 shadow-md"
+                    />
                   )}
                   <div className="flex flex-wrap gap-2 mb-4">
                     {idea.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full text-xs font-semibold shadow-sm">
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full text-xs font-semibold shadow-sm"
+                      >
                         {tag}
                       </Badge>
                     ))}
                   </div>
                   {idea.author && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Автор: {idea.author}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Автор: {idea.author}
+                    </p>
                   )}
                 </CardContent>
                 <CardFooter className="flex justify-between items-center bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-b-lg border-t border-gray-300 dark:border-gray-600">
-                  <Button variant="outline" onClick={() => handleVote(idea.id)} className="bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleVote(idea.id)}
+                    className="bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:shadow-md transition-shadow duration-300"
+                  >
                     Голосовать
                   </Button>
                   <span className="text-sm font-semibold bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full shadow-inner">

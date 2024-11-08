@@ -1,31 +1,27 @@
-import { createClient } from '@vercel/edge-config'
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
+import { addIdea, getIdeas } from '@/lib/db';
 
-const client = createClient(process.env.EDGE_CONFIG)
-
-type Idea = {
-  id: string
-  title: string
-  description: string
-  votes: number
-  tags: string[]
-  author: string
-  imageUrl?: string
+export async function GET() {
+  try {
+    const ideas = await getIdeas();
+    return NextResponse.json(ideas);
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to fetch ideas' },
+      { status: 500 }
+    );
+  }
 }
-
-type IdeasMap = Record<string, Idea>
 
 export async function POST(request: Request) {
   try {
-    const { id, idea } = await request.json() as { id: string, idea: Idea }
-    const ideas = await client.get<IdeasMap>('ideas') || {}
-    const updatedIdeas: IdeasMap = { ...ideas, [id]: idea }
-
-    await client.set('ideas', updatedIdeas)
-
-    return NextResponse.json({ success: true })
+    const body = await request.json();
+    const newIdea = await addIdea(body);
+    return NextResponse.json(newIdea);
   } catch (error) {
-    console.error('Failed to add idea:', error)
-    return NextResponse.json({ error: 'Failed to add idea' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to add idea' },
+      { status: 500 }
+    );
   }
 }
