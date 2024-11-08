@@ -10,17 +10,9 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Upload, Frame } from "lucide-react"
+import { Upload, Frame, X } from "lucide-react"
 import type { PutBlobResult } from '@vercel/blob'
 import type { Idea } from '@/lib/db'
-
-const predefinedTags = [
-  "Cinema 4D", "Photoshop", "Blender", "Unity", "Unreal Engine",
-  "JavaScript", "Python", "React", "Vue.js", "Angular",
-  "AI", "Machine Learning", "VR", "AR", "Blockchain",
-  "Gaming", "Web Development", "Mobile Apps", "IoT", "Robotics"
-]
 
 export function FeedbackBoardComponent() {
   const [ideas, setIdeas] = useState<Idea[]>([])
@@ -39,6 +31,8 @@ export function FeedbackBoardComponent() {
   })
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [tagInput, setTagInput] = useState('')
+  const [allTags, setAllTags] = useState<string[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -47,6 +41,9 @@ export function FeedbackBoardComponent() {
         const response = await fetch('/api/ideas')
         const data = await response.json()
         setIdeas(data)
+        // Extract all unique tags from ideas
+        const tags = new Set(data.flatMap((idea: Idea) => idea.tags))
+        setAllTags(Array.from(tags))
       } catch (error) {
         console.error('Error fetching ideas:', error)
       }
@@ -114,6 +111,8 @@ export function FeedbackBoardComponent() {
           author: '',
           image_url: ''
         })
+        // Update allTags with new tags
+        setAllTags(prev => Array.from(new Set([...prev, ...addedIdea.tags])))
       } catch (error) {
         console.error('Error adding idea:', error)
       }
@@ -134,12 +133,27 @@ export function FeedbackBoardComponent() {
     }
   }
 
-  const handleTagChange = (tag: string) => {
+  const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && tagInput.trim()) {
+      e.preventDefault()
+      const newTag = tagInput.trim()
+      if (!newIdea.tags.includes(newTag)) {
+        setNewIdea(prev => ({
+          ...prev,
+          tags: [...prev.tags, newTag]
+        }))
+        if (!allTags.includes(newTag)) {
+          setAllTags(prev => [...prev, newTag])
+        }
+      }
+      setTagInput('')
+    }
+  }
+
+  const removeTag = (tagToRemove: string) => {
     setNewIdea(prev => ({
       ...prev,
-      tags: prev.tags.includes(tag)
-        ? prev.tags.filter(t => t !== tag)
-        : [...prev.tags, tag]
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
     }))
   }
 
@@ -189,19 +203,36 @@ export function FeedbackBoardComponent() {
                 />
                 <div className="space-y-2">
                   <Label className="text-lg font-semibold">Теги</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {predefinedTags.map((tag) => (
-                      <div key={tag} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={tag}
-                          checked={newIdea.tags.includes(tag)}
-                          onCheckedChange={() => handleTagChange(tag)}
-                          className="border-2 border-gray-400 dark:border-gray-600 rounded-sm"
-                        />
-                        <label htmlFor={tag} className="text-sm font-medium leading-none">{tag}</label>
-                      </div>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {newIdea.tags.map((tag) => (
+                      <Badge
+                        key={tag}
+                        variant="secondary"
+                        className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full text-xs font-semibold shadow-sm flex items-center"
+                      >
+                        {tag}
+                        <button
+                          onClick={() => removeTag(tag)}
+                          className="ml-1 focus:outline-none"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
                     ))}
                   </div>
+                  <Input
+                    placeholder="Добавить тег"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={handleTagInput}
+                    className="border-2 border-gray-300 dark:border-gray-700 rounded-md shadow-inner"
+                    list="tag-suggestions"
+                  />
+                  <datalist id="tag-suggestions">
+                    {allTags.map((tag) => (
+                      <option key={tag} value={tag} />
+                    ))}
+                  </datalist>
                 </div>
                 <Input
                   placeholder="Автор"

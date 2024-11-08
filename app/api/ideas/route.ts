@@ -6,6 +6,7 @@ export async function GET() {
     const ideas = await getIdeas();
     return NextResponse.json(ideas);
   } catch (error) {
+    console.error('Error fetching ideas:', error);
     return NextResponse.json(
       { error: 'Failed to fetch ideas' },
       { status: 500 }
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
     const newIdea = await addIdea(body);
     return NextResponse.json(newIdea);
   } catch (error) {
+    console.error('Error adding idea:', error);
     return NextResponse.json(
       { error: 'Failed to add idea' },
       { status: 500 }

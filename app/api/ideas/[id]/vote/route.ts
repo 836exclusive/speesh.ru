@@ -9,6 +9,7 @@ export async function POST(
     const updatedIdea = await updateVotes(parseInt(params.id));
     return NextResponse.json(updatedIdea);
   } catch (error) {
+    console.error('Error updating votes:', error);
     return NextResponse.json(
       { error: 'Failed to update votes' },
       { status: 500 }
