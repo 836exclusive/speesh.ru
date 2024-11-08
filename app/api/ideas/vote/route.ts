@@ -1,4 +1,3 @@
-import { get } from '@vercel/edge-config'
 import { createClient } from '@vercel/edge-config'
 import { NextResponse } from 'next/server'
 
@@ -19,12 +18,10 @@ type IdeasMap = Record<string, Idea>
 export async function POST(request: Request) {
   try {
     const { id, idea } = await request.json() as { id: string, idea: Idea }
-    const ideas = (await get('ideas')) as IdeasMap | null
-    const updatedIdeas: IdeasMap = { ...(ideas || {}), [id]: idea }
+    const ideas = await client.get<IdeasMap>('ideas') || {}
+    const updatedIdeas: IdeasMap = { ...ideas, [id]: idea }
 
-    await client.update([
-      { key: 'ideas', value: updatedIdeas }
-    ])
+    await client.set('ideas', updatedIdeas)
 
     return NextResponse.json({ success: true })
   } catch (error) {
