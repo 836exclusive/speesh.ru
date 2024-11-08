@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -39,10 +39,13 @@ export function FeedbackBoardComponent() {
     const fetchIdeas = async () => {
       try {
         const response = await fetch('/api/ideas')
+        if (!response.ok) {
+          throw new Error('Failed to fetch ideas')
+        }
         const data = await response.json()
         setIdeas(data)
-        // Extract all unique tags from ideas
-        const tags = new Set<string>(data.flatMap((idea: Idea) => idea.tags as string[]))
+        // Extract all unique tags from ideas, ensuring tags is always an array
+        const tags = new Set(data.flatMap((idea: Idea) => Array.isArray(idea.tags) ? idea.tags : []))
         setAllTags(Array.from(tags))
       } catch (error) {
         console.error('Error fetching ideas:', error)
@@ -79,6 +82,10 @@ export function FeedbackBoardComponent() {
         }
       )
 
+      if (!response.ok) {
+        throw new Error('Failed to upload file')
+      }
+
       const newBlob = await response.json() as PutBlobResult
       setNewIdea(prev => ({
         ...prev,
@@ -102,6 +109,10 @@ export function FeedbackBoardComponent() {
           body: JSON.stringify(newIdea),
         })
 
+        if (!response.ok) {
+          throw new Error('Failed to add idea')
+        }
+
         const addedIdea = await response.json()
         setIdeas(prev => [...prev, addedIdea])
         setNewIdea({
@@ -124,6 +135,9 @@ export function FeedbackBoardComponent() {
       const response = await fetch(`/api/ideas/${id}/vote`, {
         method: 'POST',
       })
+      if (!response.ok) {
+        throw new Error('Failed to update votes')
+      }
       const updatedIdea = await response.json()
       setIdeas(prev => prev.map(idea =>
         idea.id === id ? updatedIdea : idea
@@ -187,6 +201,7 @@ export function FeedbackBoardComponent() {
             <DialogContent className="max-w-md bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-2xl">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-bold">Добавить новую идею</DialogTitle>
+                <DialogDescription>Заполните форму, чтобы предложить новую идею.</DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <Input
@@ -296,7 +311,7 @@ export function FeedbackBoardComponent() {
                     />
                   )}
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {idea.tags.map((tag, index) => (
+                    {Array.isArray(idea.tags) && idea.tags.map((tag, index) => (
                       <Badge
                         key={index}
                         variant="secondary"
