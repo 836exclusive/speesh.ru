@@ -44,8 +44,7 @@ export function FeedbackBoardComponent() {
         }
         const data = await response.json()
         setIdeas(data)
-        // Extract all unique tags from ideas, ensuring tags is always an array
-        const tags = new Set(data.flatMap((idea: Idea) => Array.isArray(idea.tags) ? idea.tags : []))
+        const tags = new Set<string>(data.flatMap((idea: Idea) => Array.isArray(idea.tags) ? idea.tags : []))
         setAllTags(Array.from(tags))
       } catch (error) {
         console.error('Error fetching ideas:', error)
@@ -122,7 +121,6 @@ export function FeedbackBoardComponent() {
           author: '',
           image_url: ''
         })
-        // Update allTags with new tags
         setAllTags(prev => Array.from(new Set([...prev, ...addedIdea.tags])))
       } catch (error) {
         console.error('Error adding idea:', error)
@@ -147,11 +145,11 @@ export function FeedbackBoardComponent() {
     }
   }
 
-  const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && tagInput.trim()) {
-      e.preventDefault()
-      const newTag = tagInput.trim()
-      if (!newIdea.tags.includes(newTag)) {
+  const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value
+    if (input.includes(' ')) {  // Add tag on space
+      const newTag = input.trim()
+      if (newTag && !newIdea.tags.includes(newTag)) {
         setNewIdea(prev => ({
           ...prev,
           tags: [...prev.tags, newTag]
@@ -161,6 +159,8 @@ export function FeedbackBoardComponent() {
         }
       }
       setTagInput('')
+    } else {
+      setTagInput(input)
     }
   }
 
@@ -236,10 +236,9 @@ export function FeedbackBoardComponent() {
                     ))}
                   </div>
                   <Input
-                    placeholder="Добавить тег"
+                    placeholder="Добавить тег (разделение по пробелу)"
                     value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={handleTagInput}
+                    onChange={handleTagInput}
                     className="border-2 border-gray-300 dark:border-gray-700 rounded-md shadow-inner"
                     list="tag-suggestions"
                   />
