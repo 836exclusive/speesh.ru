@@ -42,7 +42,7 @@ export function FeedbackBoardComponent() {
         const data = await response.json()
         setIdeas(data)
         // Extract all unique tags from ideas
-        const tags = new Set(data.flatMap((idea: Idea) => idea.tags))
+        const tags = new Set<string>(data.flatMap((idea: Idea) => idea.tags as string[]))
         setAllTags(Array.from(tags))
       } catch (error) {
         console.error('Error fetching ideas:', error)
