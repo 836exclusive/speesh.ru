@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image' // Импортируйте Image из next/image
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -30,7 +31,13 @@ const predefinedTags = [
 
 export function FeedbackBoardComponent() {
   const [ideas, setIdeas] = useState<Idea[]>([])
-  const [newIdea, setNewIdea] = useState({ title: '', description: '', tags: [], author: '', imageUrl: '' })
+  const [newIdea, setNewIdea] = useState<{ title: string; description: string; tags: string[]; author: string; imageUrl: string }>({
+    title: '',
+    description: '',
+    tags: [],
+    author: '',
+    imageUrl: ''
+  })
   const [isDarkMode, setIsDarkMode] = useState(false)
 
   useEffect(() => {
@@ -55,7 +62,7 @@ export function FeedbackBoardComponent() {
   }
 
   const handleVote = (id: number) => {
-    setIdeas(ideas.map(idea => 
+    setIdeas(ideas.map(idea =>
       idea.id === id ? { ...idea, votes: idea.votes + 1 } : idea
     ))
   }
@@ -118,12 +125,7 @@ export function FeedbackBoardComponent() {
                         onCheckedChange={() => handleTagChange(tag)}
                         className="border-2 border-gray-400 dark:border-gray-600 rounded-sm"
                       />
-                      <label
-                        htmlFor={tag}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        {tag}
-                      </label>
+                      <label htmlFor={tag} className="text-sm font-medium leading-none">{tag}</label>
                     </div>
                   ))}
                 </div>
@@ -156,7 +158,7 @@ export function FeedbackBoardComponent() {
               <CardContent className="pt-4">
                 <p className="mb-4">{idea.description}</p>
                 {idea.imageUrl && (
-                  <img src={idea.imageUrl} alt={idea.title} className="mb-4 rounded-md w-full h-40 object-cover border-2 border-gray-300 dark:border-gray-700 shadow-md" />
+                  <Image src={idea.imageUrl} alt={idea.title} width={600} height={200} className="mb-4 rounded-md w-full h-40 object-cover border-2 border-gray-300 dark:border-gray-700 shadow-md" />
                 )}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {idea.tags.map((tag, index) => (
