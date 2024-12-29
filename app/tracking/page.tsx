@@ -285,6 +285,20 @@ export default function TrackingPage() {
                   </p>
                 </div>
               </section>
+
+              {/* Step 7 */}
+              <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                <h3 className="text-xl font-semibold mb-4">
+                  {isEnglish ? 'Step 7: Final Result' : 'Шаг 7: Итоговый результат'}
+                </h3>
+                <div className="space-y-4">
+                  <p className="text-gray-700 dark:text-gray-300">
+                    {isEnglish 
+                      ? "The output file will be located in the 'runs' folder. Note that the generated video will be without sound. You can easily add the sound by combining the original source video with this output file using any video editor."
+                      : "Итоговый файл будет находиться в папке 'runs'. Обратите внимание, что сгенерированное видео будет без звука. Вы можете легко добавить звук, соединив исходное видео с полученным файлом в любом видеоредакторе."}
+                  </p>
+                </div>
+              </section>
             </div>
           </section>
         </main>
