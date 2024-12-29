@@ -69,8 +69,8 @@ export default function TrackingPage() {
               <div className="space-y-6">
                 <p className="text-lg leading-relaxed">
                   {isEnglish 
-                    ? "In 2023, I discovered this method and tried to push it and apply it wherever possible. In the same year, I successfully defended my bachelor's thesis on this topic. Over time, I began to find unnatural attempts to replicate it. People were doing it with AE and manually. This implementation approach violates my entire ideology, as I believe that true cyberpunk shouldn't be fake."
-                    : "В 2023 году я открыл этот способ, пытался его пропушить и применять где только можно. В том же году успешно защитил диплом бакалавра на эту тему. Спустя время начал находить неестественные попытки это повторить. Ребята делали это с помощью AE и собственноручно. Такой способ реализации нарушает всю мою идеологию, ибо я считаю что настоящий вебпанк не должен быть фейковым."}
+                    ? "In 2023, I discovered this method and tried to push it and apply it wherever possible. The following year, I successfully defended my bachelor's thesis on this topic. Over time, I began to find unnatural attempts to replicate it. People were doing it with AE and manually. This implementation approach violates my entire ideology, as I believe that true cyberpunk shouldn't be fake."
+                    : "В 2023 году я открыл этот способ, пытался его пропушить и применять где только можно. В следующем году успешно защитил диплом бакалавра на эту тему. Спустя время начал находить неестественные попытки это повторить. Ребята делали это с помощью AE и собственноручно. Такой способ реализации нарушает всю мою идеологию, ибо я считаю что настоящий вебпанк не должен быть фейковым."}
                 </p>
                 <p className="text-lg leading-relaxed">
                   {isEnglish
