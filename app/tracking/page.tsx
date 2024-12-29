@@ -1,14 +1,8 @@
 'use client';
 import { useState } from 'react';
-import { Copy, Check, ThumbsUp, ThumbsDown, Globe, Instagram, Youtube } from 'lucide-react';
+import { Copy, Check, Globe, Instagram, Youtube } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tweet } from 'react-tweet';
-import Image from 'next/image';
-
-interface Command {
-  text: string;
-  copied: boolean;
-}
 
 export default function TrackingPage() {
   const [isEnglish, setIsEnglish] = useState(false);
