@@ -270,7 +270,7 @@ export default function TrackingPage() {
                   {isEnglish ? 'Step 6: Run Tracking' : 'Шаг 6: Запуск трекинга'}
                 </h3>
                 <CommandBlock 
-                  command="python detect_or_track.py --weights yolov7.pt --no-trace --view-img --source street.mp4 --seed 2 --track --classes 0 --show-track --nobbox"
+                  command="python detect_or_track.py --weights yolov7.pt --no-trace --view-img --source street.mp4 --seed 2 --track --classes 0 --show-track "
                 />
                 <div className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-400">
                   <p>
