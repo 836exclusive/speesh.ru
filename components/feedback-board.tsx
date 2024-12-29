@@ -13,6 +13,18 @@ import { Upload, Frame, X } from "lucide-react";
 import type { PutBlobResult } from '@vercel/blob';
 import type { Idea } from '@/lib/types'; // Import only from `types`
 
+// Добавим новые стили для карточек и кнопок
+const cardStyles = {
+  base: "transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
+  gradient: "bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900",
+  border: "border-2 border-gray-200 dark:border-gray-700",
+}
+
+const buttonStyles = {
+  primary: "bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white",
+  secondary: "bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 text-gray-800 dark:text-gray-200",
+}
+
 export function FeedbackBoardComponent() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
 
@@ -175,13 +187,23 @@ export function FeedbackBoardComponent() {
   }
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
-      <div className="container mx-auto p-4 bg-white dark:bg-black text-black dark:text-white max-w-3xl">
-        <header className="flex items-center h-16 px-4 border-b shrink-0 md:px-6">
-          <div className="flex items-center gap-2 text-lg font-semibold sm:text-base mr-4">
+    <div className={`min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black ${isDarkMode ? 'dark' : ''}`}>
+      <div className="container mx-auto p-4 max-w-5xl">
+        <header className="flex items-center h-16 px-4 mb-8">
+          <div className="flex items-center gap-2 text-xl font-bold">
             <Frame className="w-6 h-6" />
-            <span>speesh.dev</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+              speesh.dev
+            </span>
           </div>
+          <nav className="ml-8 space-x-4">
+            <a href="/" className="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
+              Главная
+            </a>
+            <a href="/tracking" className="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
+              Трекинг
+            </a>
+          </nav>
           <div className="flex items-center ml-auto">
             <div className="flex items-center space-x-2">
               <Label htmlFor="dark-mode">Темная тема</Label>
@@ -194,10 +216,11 @@ export function FeedbackBoardComponent() {
             </div>
           </div>
         </header>
-        <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
+
+        <main className="space-y-8">
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="mb-4 bg-gradient-to-b from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 text-black dark:text-white border border-gray-400 dark:border-gray-600 shadow-md hover:shadow-lg transition-shadow duration-300">
+              <Button className={`${buttonStyles.primary} w-full sm:w-auto font-semibold`}>
                 <span className="mr-2">+</span> Предложить идею
               </Button>
             </DialogTrigger>
@@ -295,9 +318,13 @@ export function FeedbackBoardComponent() {
               </div>
             </DialogContent>
           </Dialog>
-          <div className="grid grid-cols-1 gap-4">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {ideas.map(idea => (
-              <Card key={idea.id} className="bg-gradient-to-b from-gray-100 to-white dark:from-gray-800 dark:to-black border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <Card 
+                key={idea.id} 
+                className={`${cardStyles.base} ${cardStyles.gradient} ${cardStyles.border}`}
+              >
                 <CardHeader className="bg-gradient-to-b from-gray-200 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-t-lg border-b border-gray-300 dark:border-gray-600">
                   <CardTitle className="text-xl font-bold">{idea.title}</CardTitle>
                 </CardHeader>
