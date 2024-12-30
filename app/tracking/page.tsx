@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { Copy, Check, Globe, Instagram, Youtube } from 'lucide-react';
+import { Copy, Check, Globe, Instagram, Youtube, Home, ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tweet } from 'react-tweet';
+import Link from 'next/link';
 
 export default function TrackingPage() {
   const [isEnglish, setIsEnglish] = useState(false);
@@ -41,9 +42,10 @@ export default function TrackingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black">
       <div className="container mx-auto px-4 py-16 max-w-4xl">
-        {/* Header Section */}
-        <header className="mb-16">
-          <div className="flex justify-end mb-8">
+        {/* Navigation */}
+        <nav className="mb-8">
+          <div className="flex items-center justify-between">
+            {/* Language Toggle */}
             <Button
               variant="outline"
               onClick={() => setIsEnglish(!isEnglish)}
@@ -52,10 +54,24 @@ export default function TrackingPage() {
               {isEnglish ? 'RU' : 'EN'}
             </Button>
           </div>
+
+          {/* Breadcrumbs */}
+          <div className="flex items-center gap-2 mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <Link href="/" className="hover:text-gray-900 dark:hover:text-gray-100">
+              {isEnglish ? 'Home' : 'Главная'}
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-gray-900 dark:text-gray-100">
+              {isEnglish ? 'YOLOv7 Tracking' : 'YOLOv7 Трекинг'}
+            </span>
+          </div>
+        </nav>
+
+        {/* Header Section */}
+        <header className="mb-16">
           <h1 className="text-5xl font-bold text-center mb-6 text-gray-900 dark:text-white">
             {isEnglish ? 'YOLOv7 Tracking Installation' : 'Установка YOLOv7 Tracking'}
           </h1>
-       
         </header>
 
         {/* Main Content */}
