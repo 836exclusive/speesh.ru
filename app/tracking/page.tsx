@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Copy, Check, Globe, Instagram, Youtube, Home, ChevronRight } from 'lucide-react';
+import { Copy, Check, Globe, Instagram, Youtube, ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tweet } from 'react-tweet';
 import Link from 'next/link';
