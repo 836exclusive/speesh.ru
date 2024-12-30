@@ -329,43 +329,62 @@ export default function TrackingPage() {
               </section>
             </div>
           </section>
-        </main>
 
-        {/* Social Links */}
-        <footer className="mt-12 text-center space-y-4">
-          <div className="flex justify-center gap-6">
-            <a 
-              href="https://rbdclan.moscow/speesh" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-2"
-            >
-              <Globe className="h-5 w-5" />
-              <span>RBD Clan</span>
-            </a>
-            <a 
-              href="https://instagram.com/speeshspeesh" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-2"
-            >
-              <Instagram className="h-5 w-5" />
-              <span>Instagram</span>
-            </a>
-            <a 
-              href="https://www.youtube.com/@w36lord" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-2"
-            >
-              <Youtube className="h-5 w-5" />
-              <span>YouTube</span>
-            </a>
-          </div>
-          <p className="text-sm text-gray-500 dark:text-gray-600">
-            © 2024 speesh.dev
-          </p>
-        </footer>
+          {/* Installation Video */}
+          <section className="mt-16">
+            <h2 className="text-2xl font-bold mb-6 text-center">
+              {isEnglish 
+                ? "Installation Process (Uncut Version)" 
+                : "Процесс установки без склеек и ускорений если у кого то возникают проблемы"}
+            </h2>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg">
+              <div className="aspect-video">
+                <iframe
+                  className="w-full h-full"
+                  src="https://www.youtube.com/embed/ECW47lwOmZg"
+                  title="YOLOv7 Installation Process"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Social Links */}
+          <footer className="mt-12 text-center space-y-4">
+            <div className="flex justify-center gap-6">
+              <a 
+                href="https://rbdclan.moscow/speesh" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-2"
+              >
+                <Globe className="h-5 w-5" />
+                <span>RBD Clan</span>
+              </a>
+              <a 
+                href="https://instagram.com/speeshspeesh" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-2"
+              >
+                <Instagram className="h-5 w-5" />
+                <span>Instagram</span>
+              </a>
+              <a 
+                href="https://www.youtube.com/@w36lord" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-2"
+              >
+                <Youtube className="h-5 w-5" />
+                <span>YouTube</span>
+              </a>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-600">
+              © 2024 speesh.dev
+            </p>
+          </footer>
+        </main>
       </div>
     </div>
   );
