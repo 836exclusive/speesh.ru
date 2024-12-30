@@ -235,9 +235,21 @@ export default function TrackingPage() {
                     {isEnglish ? 'Important:' : 'Важно:'}
                   </p>
                   <ol className="list-decimal list-inside space-y-2">
-                    <li>{isEnglish ? 'Press the Windows key and type "Anaconda Prompt" in the search bar' : 'Нажмите кнопку Windows и введите "Anaconda Prompt" в поиске'}</li>
-                    <li>{isEnglish ? 'Run "Anaconda Prompt (Anaconda3)"' : 'Запустите "Anaconda Prompt (Anaconda3)"'}</li>
-                    <li>{isEnglish ? 'In the opened window, navigate to your project folder:' : 'В открывшемся окне перейдите в папку вашего проекта:'}</li>
+                    <li>
+                      {isEnglish 
+                        ? 'Press the Windows key and type "Anaconda PowerShell Prompt" in the search bar' 
+                        : 'Нажмите кнопку Windows и введите "Anaconda PowerShell Prompt" в поиске'}
+                    </li>
+                    <li>
+                      {isEnglish 
+                        ? 'Run "Anaconda PowerShell Prompt (Anaconda3)"' 
+                        : 'Запустите "Anaconda PowerShell Prompt (Anaconda3)"'}
+                    </li>
+                    <li>
+                      {isEnglish 
+                        ? 'In the opened window, navigate to your project folder:' 
+                        : 'В открывшемся окне перейдите в папку вашего проекта:'}
+                    </li>
                   </ol>
                 </div>
                 <div className="space-y-4">
