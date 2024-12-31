@@ -4,9 +4,11 @@ import { Copy, Check, Globe, Instagram, Youtube, ChevronRight } from 'lucide-rea
 import { Button } from "@/components/ui/button";
 import { Tweet } from 'react-tweet';
 import Link from 'next/link';
+import { Switch } from "@/components/ui/switch";
 
 export default function TrackingPage() {
   const [isEnglish, setIsEnglish] = useState(false);
+  const [isMacOS, setIsMacOS] = useState(false);
   const [copiedStates, setCopiedStates] = useState<{ [key: string]: boolean }>({});
 
   const handleCopy = async (text: string) => {
@@ -45,14 +47,16 @@ export default function TrackingPage() {
         {/* Navigation */}
         <nav className="mb-8">
           <div className="flex items-center justify-between">
-            {/* Language Toggle */}
-            <Button
-              variant="outline"
-              onClick={() => setIsEnglish(!isEnglish)}
-              className="font-semibold"
-            >
-              {isEnglish ? 'RU' : 'EN'}
-            </Button>
+            {/* Language Toggle Only */}
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setIsEnglish(!isEnglish)}
+                className="font-semibold"
+              >
+                {isEnglish ? 'RU' : 'EN'}
+              </Button>
+            </div>
           </div>
 
           {/* Breadcrumbs */}
@@ -67,15 +71,15 @@ export default function TrackingPage() {
           </div>
         </nav>
 
-        {/* Header Section */}
-        <header className="mb-16">
-          <h1 className="text-5xl font-bold text-center mb-6 text-gray-900 dark:text-white">
-            {isEnglish ? 'YOLOv7 Tracking Installation' : 'Установка YOLOv7 Tracking'}
-          </h1>
-        </header>
-
-        {/* Main Content */}
+        {/* Single main tag wrapping all content */}
         <main className="space-y-16">
+          {/* Header Section */}
+          <header className="mb-16">
+            <h1 className="text-5xl font-bold text-center mb-6 text-gray-900 dark:text-white">
+              {isEnglish ? 'YOLOv7 Tracking Installation' : 'Установка YOLOv7 Tracking'}
+            </h1>
+          </header>
+
           {/* Story Section */}
           <section className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-8">
             <div className="prose dark:prose-invert max-w-none">
@@ -178,7 +182,7 @@ export default function TrackingPage() {
               <div className="space-y-4">
                 {[
                   { name: 'Git', url: 'https://git-scm.com/downloads' },
-                  { name: 'Python', url: 'https://www.python.org/' },
+                  { name: isMacOS ? 'Python (Homebrew)' : 'Python', url: isMacOS ? 'https://brew.sh' : 'https://www.python.org/' },
                   { name: 'Anaconda', url: 'https://www.anaconda.com/download' }
                 ].map((tool) => (
                   <div key={tool.name} className="flex items-center space-x-2">
@@ -196,6 +200,51 @@ export default function TrackingPage() {
               </div>
             </section>
 
+            {/* Mac M1 Notice */}
+            {isMacOS && (
+              <section className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-6 mb-8">
+                <h3 className="text-xl font-semibold mb-4">
+                  {isEnglish ? 'Note for Mac M1/M2 Users' : 'Примечание для пользователей Mac M1/M2'}
+                </h3>
+                <div className="space-y-4">
+                  <p className="text-gray-700 dark:text-gray-300">
+                    {isEnglish 
+                      ? "This guide has been tested on Mac M1. Please note:"
+                      : "Это руководство было протестировано на Mac M1. Обратите внимание:"}
+                  </p>
+                  <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                    <li>
+                      {isEnglish
+                        ? "Installation and initial setup might take longer than expected"
+                        : "Установка и начальная настройка могут занять больше времени, чем ожидалось"}
+                    </li>
+                    <li>
+                      {isEnglish
+                        ? "Real-time tracking won't work at full speed as processing is done on CPU only"
+                        : "Отслеживание в реальном времени не будет работать на полной скорости, так как обработка выполняется только на CPU"}
+                    </li>
+                    <li>
+                      {isEnglish
+                        ? "For video processing, expect longer rendering times"
+                        : "При обработке видео ожидайте более длительное время рендеринга"}
+                    </li>
+                  </ul>
+                </div>
+              </section>
+            )}
+
+            {/* OS Toggle */}
+            <div className="flex justify-center mb-8">
+              <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg">
+                <span className="text-sm font-medium">Windows</span>
+                <Switch
+                  checked={isMacOS}
+                  onCheckedChange={setIsMacOS}
+                />
+                <span className="text-sm font-medium">macOS</span>
+              </div>
+            </div>
+
             {/* Installation Steps */}
             <div className="space-y-8">
               {/* Step 1 */}
@@ -204,17 +253,58 @@ export default function TrackingPage() {
                   {isEnglish ? 'Step 1: Prepare Working Directory' : 'Шаг 1: Подготовка рабочей папки'}
                 </h3>
                 <ol className="list-decimal list-inside space-y-2">
-                  <li>{isEnglish ? 'Create a project folder (e.g., "D:\\Projects\\YOLOv7_tracking")' : 'Создайте папку для проекта (например, "D:\\Projects\\YOLOv7_tracking")'}</li>
-                  <li>{isEnglish ? 'Open this folder' : 'Откройте эту папку'}</li>
-                  <li>{isEnglish ? 'Right-click in an empty space' : 'Нажмите правой кнопкой мыши в пустом месте'}</li>
-                  <li>{isEnglish ? 'Select "Open in Terminal"' : 'Выберите "Открыть в терминале"'}</li>
+                  {isMacOS ? (
+                    <>
+                      <li>{isEnglish ? 'Open Terminal' : 'Откройте Терминал'}</li>
+                      <li>{isEnglish ? 'Create and navigate to projects directory:' : 'Создайте и перейдите в директорию проектов:'}</li>
+                      <CommandBlock command="mkdir -p ~/Projects/YOLOv7_tracking && cd ~/Projects/YOLOv7_tracking" />
+                    </>
+                  ) : (
+                    <>
+                      <li>{isEnglish ? 'Create a project folder (e.g., "D:\\Projects\\YOLOv7_tracking")' : 'Создайте папку для проекта (например, "D:\\Projects\\YOLOv7_tracking")'}</li>
+                      <li>{isEnglish ? 'Open this folder' : 'Откройте эту папку'}</li>
+                      <li>{isEnglish ? 'Right-click in an empty space' : 'Нажмите правой кнопкой мыши в пустом месте'}</li>
+                      <li>{isEnglish ? 'Select "Open in Terminal"' : 'Выберите "Открыть в терминале"'}</li>
+                    </>
+                  )}
                 </ol>
               </section>
 
               {/* Step 2 */}
               <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
                 <h3 className="text-xl font-semibold mb-4">
-                  {isEnglish ? 'Step 2: Clone Repositories' : 'Шаг 2: Клонирование репозиториев'}
+                  {isEnglish ? 'Step 2: Install Prerequisites' : 'Шаг 2: Установка необходимых компонентов'}
+                </h3>
+                {isMacOS ? (
+                  <div className="space-y-4">
+                    <p>{isEnglish ? 'Install Homebrew if not already installed:' : 'Установите Homebrew, если еще не установлен:'}</p>
+                    <CommandBlock command='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"' />
+                    
+                    <p>{isEnglish ? 'After installation, run these commands to add Homebrew to your PATH:' : 'После установки выполните эти команды, чтобы добавить Homebrew в PATH:'}</p>
+                    <CommandBlock command={'echo \'eval "$(/opt/homebrew/bin/brew shellenv)"\' >> ~/.zprofile'} />
+                    <CommandBlock command={'eval "$(/opt/homebrew/bin/brew shellenv)"'} />
+                    
+                    <p>{isEnglish ? 'Install Python and Git:' : 'Установите Python и Git:'}</p>
+                    <CommandBlock command="brew install python git" />
+                    
+                    <p>{isEnglish ? 'Verify Python and pip installation:' : 'Проверьте установку Python и pip:'}</p>
+                    <CommandBlock command="python3 -V" />
+                    <CommandBlock command="which python3" />
+                    
+                    <p>{isEnglish ? 'If pip is not found, install it:' : 'Если pip не найден, установите его:'}</p>
+                    <CommandBlock command="curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py" />
+                    <CommandBlock command="python3 get-pip.py" />
+                    <CommandBlock command="rm get-pip.py" />
+                  </div>
+                ) : (
+                  <p>{isEnglish ? 'Ensure Python, Git, and Anaconda are installed from the prerequisites section.' : 'Убедитесь, что Python, Git и Anaconda установлены из раздела предварительных требований.'}</p>
+                )}
+              </section>
+
+              {/* Step 3 */}
+              <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                <h3 className="text-xl font-semibold mb-4">
+                  {isEnglish ? 'Step 3: Clone Repositories' : 'Шаг 3: Клонирование репозиториев'}
                 </h3>
                 <div className="space-y-4">
                   <CommandBlock command="git clone https://github.com/WongKinYiu/yolov7.git" />
@@ -222,68 +312,66 @@ export default function TrackingPage() {
                 </div>
               </section>
 
-              {/* Step 3 */}
-              <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-                <h3 className="text-xl font-semibold mb-4">
-                  {isEnglish ? 'Step 3: Copy Necessary Files' : 'Шаг 3: Копирование необходимых файлов'}
-                </h3>
-                <p className="mb-4">
-                  {isEnglish 
-                    ? 'Copy the following files from the yolov7-object-tracking repository to the yolov7 folder:'
-                    : 'Скопируйте следующие файлы из репозитория yolov7-object-tracking в папку yolov7:'}
-                </p>
-                <ul className="list-disc list-inside space-y-2">
-                  <li>detect_or_track.py</li>
-                  <li>sort </li>
-                  <li>requirements.txt</li>
-                  <li>requirements_gpu.txt</li>
-                  <li>street.mp4</li>
-                </ul>
-              </section>
-
               {/* Step 4 */}
               <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
                 <h3 className="text-xl font-semibold mb-4">
-                  {isEnglish ? 'Step 4: Create and Activate Conda Environment' : 'Шаг 4: Создание и активация conda окружения'}
+                  {isEnglish ? 'Step 4: Copy Files' : 'Шаг 4: Копирование файлов'}
                 </h3>
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 mb-6">
-                  <p className="font-semibold mb-2">
-                    {isEnglish ? 'Important:' : 'Важно:'}
-                  </p>
-                  <ol className="list-decimal list-inside space-y-2">
-                    <li>
-                      {isEnglish 
-                        ? 'Press the Windows key and type "Anaconda PowerShell Prompt" in the search bar' 
-                        : 'Нажмите кнопку Windows и введите "Anaconda PowerShell Prompt" в поиске'}
-                    </li>
-                    <li>
-                      {isEnglish 
-                        ? 'Run "Anaconda PowerShell Prompt (Anaconda3)"' 
-                        : 'Запустите "Anaconda PowerShell Prompt (Anaconda3)"'}
-                    </li>
-                    <li>
-                      {isEnglish 
-                        ? 'In the opened window, navigate to your project folder:' 
-                        : 'В открывшемся окне перейдите в папку вашего проекта:'}
-                    </li>
-                  </ol>
-                </div>
                 <div className="space-y-4">
-                  <CommandBlock command='cd "D:\Projects\YOLOv7_tracking\yolov7"' />
-                  <CommandBlock command="conda create -n yolov7_tracking python=3.9" />
-                  <CommandBlock command="conda activate yolov7_tracking" />
+                  {isMacOS ? (
+                    <>
+                      <p>{isEnglish ? 'Try using this command:' : 'Попробуйте использовать эту команду:'}</p>
+                      <CommandBlock command="cp yolov7-object-tracking/{detect_or_track.py,requirements.txt,requirements_gpu.txt,street.mp4} yolov7/ && cp -r yolov7-object-tracking/sort yolov7/" />
+                      
+                      <p className="text-amber-600 dark:text-amber-400 italic">
+                        {isEnglish 
+                          ? "If the command doesn't work, copy these files manually from yolov7-object-tracking to yolov7 folder:"
+                          : "Если команда не работает, скопируйте эти файлы вручную из папки yolov7-object-tracking в папку yolov7:"}
+                      </p>
+                    </>
+                  ) : (
+                    <p>
+                      {isEnglish 
+                        ? 'Copy the following files from the yolov7-object-tracking repository to the yolov7 folder:'
+                        : 'Скопируйте следующие файлы из репозитория yolov7-object-tracking в папку yolov7:'}
+                    </p>
+                  )}
+                  <ul className="list-disc list-inside space-y-2">
+                    <li>detect_or_track.py</li>
+                    <li>sort {isEnglish ? '(entire folder)' : '(всю папку целиком)'}</li>
+                    <li>requirements.txt</li>
+                    <li>requirements_gpu.txt</li>
+                    <li>street.mp4</li>
+                  </ul>
                 </div>
-                <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                  {isEnglish 
-                    ? 'Note: Replace the path with your project location'
-                    : 'Примечание: Замените путь на тот, где находится ваш проект'}
-                </p>
               </section>
 
               {/* Step 5 */}
               <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
                 <h3 className="text-xl font-semibold mb-4">
-                  {isEnglish ? 'Step 5: Install Dependencies' : 'Шаг 5: Установка зависимостей'}
+                  {isEnglish ? 'Step 5: Set Up Environment' : 'Шаг 5: Настройка окружения'}
+                </h3>
+                <div className="space-y-4">
+                  {isMacOS ? (
+                    <>
+                      <CommandBlock command="cd yolov7" />
+                      <CommandBlock command="python3 -m venv venv" />
+                      <CommandBlock command="source venv/bin/activate" />
+                    </>
+                  ) : (
+                    <>
+                      <CommandBlock command='cd "D:\Projects\YOLOv7_tracking\yolov7"' />
+                      <CommandBlock command="conda create -n yolov7_tracking python=3.9" />
+                      <CommandBlock command="conda activate yolov7_tracking" />
+                    </>
+                  )}
+                </div>
+              </section>
+
+              {/* Step 6 */}
+              <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                <h3 className="text-xl font-semibold mb-4">
+                  {isEnglish ? 'Step 6: Install Dependencies' : 'Шаг 6: Установка зависимостей'}
                 </h3>
                 <div className="space-y-4">
                   <CommandBlock command="pip install -r requirements.txt" />
@@ -292,13 +380,13 @@ export default function TrackingPage() {
                 </div>
               </section>
 
-              {/* Step 6 */}
+              {/* Step 7 */}
               <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
                 <h3 className="text-xl font-semibold mb-4">
-                  {isEnglish ? 'Step 6: Run Tracking' : 'Шаг 6: Запуск трекинга'}
+                  {isEnglish ? 'Step 7: Run Tracking' : 'Шаг 7: Запуск трекинга'}
                 </h3>
                 <CommandBlock 
-                  command="python detect_or_track.py --weights yolov7.pt --no-trace --view-img --source street.mp4 --seed 2 --track --classes 0 --show-track "
+                  command="python detect_or_track.py --weights yolov7.pt --no-trace --view-img --source street.mp4 --seed 2 --track --classes 0 --show-track"
                 />
                 <div className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-400">
                   <p>
@@ -314,10 +402,10 @@ export default function TrackingPage() {
                 </div>
               </section>
 
-              {/* Step 7 */}
+              {/* Step 8 */}
               <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
                 <h3 className="text-xl font-semibold mb-4">
-                  {isEnglish ? 'Step 7: Final Result' : 'Шаг 7: Итоговый результат'}
+                  {isEnglish ? 'Step 8: Final Result' : 'Шаг 8: Итоговый результат'}
                 </h3>
                 <div className="space-y-4">
                   <p className="text-gray-700 dark:text-gray-300">
@@ -335,7 +423,7 @@ export default function TrackingPage() {
             <h2 className="text-2xl font-bold mb-6 text-center">
               {isEnglish 
                 ? "Installation Process (Uncut Version)" 
-                : "Процесс установки без склеек и ускорений если у кого то возникают проблемы"}
+                : "Процесс установки без склеек и ускорений если у кого то возникают проблемы (windows)"}
             </h2>
             <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg">
               <div className="aspect-video">
